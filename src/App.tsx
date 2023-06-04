@@ -1,7 +1,6 @@
 import React, { useCallback, useEffect, useState } from "react"
 import { createMuiTheme, ThemeProvider } from "@material-ui/core"
 import CssBaseline from "@material-ui/core/CssBaseline"
-import Container from "@material-ui/core/Container"
 import Snackbar from "@material-ui/core/Snackbar"
 import Typography from "@material-ui/core/Typography"
 import Search from "./Components/Search"
@@ -218,7 +217,6 @@ function App() {
 	)
 
 	const handleRefresh = () => {
-		console.log(loading)
 		setLoading(true)
 		onecall(weatherData.lat, weatherData.lon)
 	}
@@ -236,7 +234,7 @@ function App() {
 				}}
 			>
 				<CssBaseline />
-				<Container maxWidth="sm" component="main">
+				<main>
 					<Search
 						search={handleSearch}
 						refresh={handleRefresh}
@@ -258,7 +256,7 @@ function App() {
 							<Footer />
 						</>
 					)}
-				</Container>
+				</main>
 			</weatherContext.Provider>
 			<Snackbar
 				open={snackbar}
