@@ -4,11 +4,12 @@ import AccordionSummary from "@material-ui/core/AccordionSummary"
 import AccordionDetails from "@material-ui/core/AccordionDetails"
 import Typography from "@material-ui/core/Typography"
 import { makeStyles } from "@material-ui/core"
-import { weatherContext } from "../App"
 import { getDay } from "../Helpers/getTime"
 import DailyStats from "./DailyStats"
 import Skeleton from "@material-ui/lab/Skeleton"
 import ExpandMoreIcon from "@material-ui/icons/ExpandMore"
+import { queryClient } from "../main"
+import { weatherType } from "../Helpers/types"
 
 const useStyles = makeStyles({
 	root: {
@@ -46,9 +47,12 @@ const useStyles = makeStyles({
 const options = {
 	weekday: "long",
 }
-const DailyAccord = () => {
+const DailyAccord = ({ loading }: { loading: boolean }) => {
+	const weatherData = queryClient.getQueryState<weatherType>(["weather"])
+	const daily = weatherData?.data?.daily ?? []
+	const timezone = weatherData?.data?.timezone ?? "Asia/Kolkata"
 	const classes = useStyles()
-	const { daily, timezone, loading } = useContext(weatherContext)
+
 	const [expanded, setExpanded] = useState<string | null>()
 	const handleChange =
 		(panel: string) => (event: React.ChangeEvent<{}>, newExpanded: boolean) => {
@@ -103,7 +107,7 @@ const DailyAccord = () => {
 							</div>
 						</AccordionSummary>
 						<AccordionDetails classes={{ root: classes.accordDetailsRoot }}>
-							<DailyStats day={day} />
+							<DailyStats day={day} loading={loading} />
 						</AccordionDetails>
 					</Accordion>
 				))
