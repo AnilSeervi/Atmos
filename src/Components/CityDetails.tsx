@@ -1,9 +1,8 @@
-import React, { useContext } from "react"
 import Typography from "@material-ui/core/Typography"
-import { weatherContext } from "../App"
 import { getTime } from "../Helpers/getTime"
 import Skeleton from "@material-ui/lab/Skeleton"
-import { city } from "../Helpers/types"
+import { queryClient } from "../main"
+import { locationType, weatherType } from "../Helpers/types"
 
 const options = {
 	weekday: "long",
@@ -15,8 +14,14 @@ const options = {
 	timeZoneName: "short",
 }
 
-const CityDetails = ({ cityName, fullCity, timezone }: city) => {
-	const { loading } = useContext(weatherContext)
+const CityDetails = ({ loading }: { loading: boolean }) => {
+	const weatherData = queryClient.getQueryState<weatherType>(["weather"])
+	const locationData = queryClient.getQueryState<locationType>(["location"])
+
+	const timezone = weatherData?.data?.timezone ?? "Asia/Kolkata"
+	const cityName = locationData?.data?.features?.[0]?.text ?? "City"
+	const fullCity = locationData?.data?.features?.[0]?.place_name ?? "Country"
+
 	return (
 		<section className="city-details">
 			<Typography variant="h5" gutterBottom component="h1">

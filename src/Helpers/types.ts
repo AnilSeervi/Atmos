@@ -14,13 +14,14 @@ export type city = {
 	timezone: string
 }
 
-export interface contextType {
-	current: any
-	daily: any
-	hourly: any
-	timezone: string
-	minutely: any
-	loading: boolean
+type location = {
+	center: [number, number]
+	place_name: string
+	text: string
+}
+
+export type locationType = {
+	features: location[]
 }
 
 export interface searchProps {
