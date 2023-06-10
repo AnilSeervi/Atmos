@@ -71,28 +71,29 @@ function App() {
 	const [snackbar, setSnackbar] = useState(false)
 	const [loading, setLoading] = useState(true)
 
-	const success = (pos: GeolocationPosition) => {
+	const success = async (pos: GeolocationPosition) => {
 		localStorage.setItem("gps-granted", String(true))
 		onecall(pos.coords.latitude, pos.coords.longitude)
-		fetchData(
-			`${import.meta.env.VITE_MAPBOX_URL}${pos.coords.longitude},${
-				pos.coords.latitude
-			}.json?access_token=${import.meta.env.VITE_MAPBOX_TOKEN}${
-				import.meta.env.VITE_MAPBOX_OPTIONS
-			}`
-		)
-			.then(data => {
-				localStorage.setItem(
-					"city",
-					JSON.stringify({
-						city: data.features[0].text,
-						fullcity: data.features[0].place_name,
-					})
-				)
-			})
-			.catch(err => {
-				console.log(err)
-			})
+		try {
+			const data = await queryClient.fetchQuery(["location"], () =>
+				fetch(
+					`${import.meta.env.VITE_MAPBOX_URL}${pos.coords.longitude},${
+						pos.coords.latitude
+					}.json?access_token=${import.meta.env.VITE_MAPBOX_TOKEN}${
+						import.meta.env.VITE_MAPBOX_OPTIONS
+					}`
+				).then(res => res.json())
+			)
+			localStorage.setItem(
+				"city",
+				JSON.stringify({
+					city: data.features[0].text,
+					fullcity: data.features[0].place_name,
+				})
+			)
+		} catch (err: any) {
+			console.log(err)
+		}
 	}
 
 	const error = useCallback(() => {
@@ -135,7 +136,6 @@ function App() {
 					res => res.json()
 				)
 			)
-
 			setBodyClass(
 				data.current.weather[0].id.toString(),
 				getIfDay(data.current.sunrise, data.current.sunset)
